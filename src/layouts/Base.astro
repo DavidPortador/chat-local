@@ -1,0 +1,30 @@
+---
+import "../styles.css";
+import { BotMessageSquare } from "lucide-react";
+const { title = "Local AI Chat" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+</head>
+
+<body>
+    <div class="min-h-screen flex flex-col bg-gray-100">
+        <header class="bg-gray-800 text-white p-4 shadow-md">
+            <div class="container mx-auto flex justify-between items-center">
+                <BotMessageSquare/>
+                <h1 class="text-xl font-bold">{title}</h1>
+                <p class="text-sm text-gray-300">Powered by DP</p>
+            </div>
+        </header>
+        <slot />
+        <footer class="bg-gray-800 text-white p-4 text-center text-sm">
+            <p>Chat with local AI models using Ollama</p>
+        </footer>
+    </div>
+</body>
+</html>

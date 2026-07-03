@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Send } from "lucide-react";
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
@@ -93,16 +94,7 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      {/* Header */}
-      <header className="bg-gray-800 text-white p-4 shadow-md">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">Local AI Chat</h1>
-          <p className="text-sm text-gray-300">Powered by DP</p>
-        </div>
-      </header>
-
-      {/* Main Content */}
+    <>
       <main className="flex-1 container mx-auto p-4 flex flex-col">
         {/* Chat Container */}
         <div className="flex-1 bg-white rounded-lg shadow-md flex flex-col">
@@ -158,18 +150,13 @@ const ChatInterface = () => {
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center disabled:opacity-50"
                 disabled={isLoading || !inputValue.trim()}
               >
-                <span>Send</span>
+                <Send/>
               </button>
             </form>
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white p-4 text-center text-sm">
-        <p>Chat with local AI models using Ollama</p>
-      </footer>
-    </div>
+    </>
   );
 };
 
