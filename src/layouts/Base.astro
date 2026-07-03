@@ -5,15 +5,15 @@ const { title = "Local AI Chat" } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
 </head>
 
-<body>
-    <div class="min-h-screen flex flex-col bg-gray-100">
+<body class="min-h-screen flex flex-col bg-gray-900 text-white">
+    <div class="min-h-screen flex flex-col bg-gray-700">
         <header class="bg-gray-800 text-white p-4 shadow-md">
             <div class="container mx-auto flex justify-between items-center">
                 <BotMessageSquare/>
