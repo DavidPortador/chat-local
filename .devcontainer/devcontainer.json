@@ -1,0 +1,22 @@
+{
+  "name": "ChatLocal",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "astro-app",
+  "workspaceFolder": "/app",
+  "shutdownAction": "none",
+  "remoteUser": "root",
+  "overrideCommand": false,
+  "forwardPorts": [
+    4321
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "astro-build.astro-vscode",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "humao.rest-client"
+      ]
+    }
+  }
+}

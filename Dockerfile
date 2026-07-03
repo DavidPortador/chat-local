@@ -16,5 +16,8 @@ COPY . .
 # Expose port
 EXPOSE 4321
 
+# Execute entrypoint commands (clear astro cache)
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+
 # Run the development server
 CMD ["npm", "run", "dev", "--", "--host", "--port", "4321"]
