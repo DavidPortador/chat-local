@@ -1,6 +1,7 @@
 ---
-import "../styles.css";
-import { BotMessageSquare } from "lucide-react";
+import "../styles/global.css";
+import FooterLayout from "./Footer.astro";
+import HeaderLayout from "./Header.astro";
 const { title = "Local AI Chat" } = Astro.props;
 ---
 
@@ -12,19 +13,9 @@ const { title = "Local AI Chat" } = Astro.props;
     <title>{title}</title>
 </head>
 
-<body class="min-h-screen flex flex-col bg-gray-900 text-white">
-    <div class="min-h-screen flex flex-col bg-gray-700">
-        <header class="bg-gray-800 text-white p-4 shadow-md">
-            <div class="container mx-auto flex justify-between items-center">
-                <BotMessageSquare/>
-                <h1 class="text-xl font-bold">{title}</h1>
-                <p class="text-sm text-gray-300">Powered by DP</p>
-            </div>
-        </header>
-        <slot />
-        <footer class="bg-gray-800 text-white p-4 text-center text-sm">
-            <p>Chat with local AI models using Ollama</p>
-        </footer>
-    </div>
+<body class="h-screen flex flex-col min-h-0 bg-gray-700 text-white">
+    <HeaderLayout />
+    <slot />
+    <FooterLayout/>
 </body>
 </html>
