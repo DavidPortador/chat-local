@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Send, RefreshCw } from "lucide-react";
+import { httpGet, httpPost } from '../utils/httpClient';
 
 const ChatInterface = () => {
   const env = import.meta.env;
@@ -39,28 +40,17 @@ const ChatInterface = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(chatUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: modelName,
-          messages: [
-            {
-              role: 'user',
-              content: userMessage
-            }
-          ]
-        })
+      const response = await httpPost(chatUrl, {
+        model: modelName,
+        messages: [
+          {
+            role: 'user',
+            content: userMessage
+          }
+        ]
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
+      const aiResponse = response.choices[0].message.content;
 
       // Add AI response to chat
       const newAiMessage = {
@@ -102,17 +92,10 @@ const ChatInterface = () => {
       setShowOptions(false);
     } else {
       try {
-        const response = await fetch(modelsUrl, {
-          method: 'GET'
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        if (data.models && Array.isArray(data.models)) {
-          setModelOptions(data.models.map(model => model.name));
+        const response = await httpGet(modelsUrl);
+   
+        if (response.models && Array.isArray(response.models)) {
+          setModelOptions(response.models.map(model => model.name));
           setShowOptions(true);
         }
       } catch (error) {
