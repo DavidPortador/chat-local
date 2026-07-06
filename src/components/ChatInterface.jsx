@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Send, RefreshCw } from "lucide-react";
+import { Send, RefreshCw, User, Bot } from "lucide-react";
 import { httpGet, httpPost } from '../utils/httpClient';
 
 const ChatInterface = () => {
@@ -124,13 +124,23 @@ const ChatInterface = () => {
               messages.map((message) => (
                 <div 
                   key={message.id}
-                  className={`p-4 rounded-lg max-w-3xl mx-auto ${
+                  className={`flex space-x-2 p-4 rounded-lg max-w-3xl mx-auto ${
                     message.role === 'user' 
                       ? 'bg-gray-700 text-white' 
                       : 'bg-gray-800 text-white'
                   }`}
                 >
-                  <p>{message.content}</p>
+                  {message.role === 'user' ? (
+                    <>
+                      <p className="flex-1 text-right">{message.content}</p>
+                      <User className="mt-1 flex-shrink-0" size={20} />
+                    </>
+                  ) : (
+                    <>
+                      <Bot className="mt-1 flex-shrink-0" size={20} />
+                      <p>{message.content}</p>
+                    </>
+                  )}
                 </div>
               ))
             )}
