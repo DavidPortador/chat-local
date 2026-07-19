@@ -8,6 +8,7 @@ const ChatInterface = () => {
   const chatUrl = env.PUBLIC_CHAT_API_URL;
   const modelsUrl = env.PUBLIC_MODELS_API_URL;
   const defaultModel = env.PUBLIC_MODEL_NAME;
+  const initMessage = "Send a message to start chatting with ";
 
   const [defaultMessage, setDefaultMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -35,7 +36,7 @@ const ChatInterface = () => {
 
   const initModels = async () => {
     try {
-      let msj = "Send a message to start chatting with ";
+      let msj = initMessage;
       const response = await httpGet(modelsUrl);
       if (response.models && Array.isArray(response.models)) {
         let models = response.models.map(model => model.name);
@@ -60,38 +61,31 @@ const ChatInterface = () => {
 
   const sendMessage = async (userMessage) => {
     if (!userMessage.trim()) return;
-
     // Add user message to chat
     const newUserMessage = {
       id: Date.now(),
       role: 'user',
       content: userMessage
     };
-    
     setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
     setIsLoading(true);
-
     try {
       const response = await httpPost(chatUrl, {
         model: modelName,
-        messages: [
-          {
+        messages: [{
             role: 'user',
             content: userMessage
-          }
-        ]
+        }]
       });
-
       const aiResponse = response.choices[0].message.content;
-
       // Add AI response to chat
       const newAiMessage = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: aiResponse
+        content: aiResponse,
+        model: modelName
       };
-      
       setMessages(prev => [...prev, newAiMessage]);
     } catch (error) {
       console.error('Error:', error);
@@ -130,6 +124,7 @@ const ChatInterface = () => {
 
   const selectModel = (model) => {
     setModelName(model);
+    setDefaultMessage(initMessage+model)
     setShowOptions(false);
   };
 
@@ -162,13 +157,20 @@ const ChatInterface = () => {
                   ) : (
                     <>
                       <Bot className="mt-1 flex-shrink-0" size={20} />
-                      <p>{message.content}</p>
+                      <p>
+                        {message.model ? (
+                          <i>
+                            {message.model+":"}
+                            <br></br>
+                          </i>
+                        ) : ""}
+                        {message.content}
+                      </p>
                     </>
                   )}
                 </div>
               ))
             )}
-            
             {isLoading && (
               <div className="p-4 rounded-lg max-w-3xl mx-auto bg-gray-800 text-white">
                 <div className="flex items-center">
@@ -180,7 +182,6 @@ const ChatInterface = () => {
             )}
             <div ref={messagesEndRef} />
           </div>
-
           {/* Input Area */}
           <div className="border-t border-gray-700 p-4 bg-gray-800">
             <form onSubmit={handleSubmit} className="flex space-x-2">
@@ -212,7 +213,6 @@ const ChatInterface = () => {
                 <Send/>
               </button>
             </form>
-            
             {/* Model Options Dropdown */}
             {showOptions && (
               <div className="mt-2 p-2 bg-gray-700 rounded-lg">
