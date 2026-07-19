@@ -9,9 +9,11 @@ const ChatInterface = () => {
   const modelsUrl = env.PUBLIC_MODELS_API_URL;
   const defaultModel = env.PUBLIC_MODEL_NAME;
 
+  const [defaultMessage, setDefaultMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [validInput, setValidInput] = useState(false);
   const [modelName, setModelName] = useState(defaultModel);
   const [modelOptions, setModelOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
@@ -22,8 +24,39 @@ const ChatInterface = () => {
   };
 
   useEffect(() => {
+    initModels();
     scrollToBottom();
   }, [messages]);
+
+  const initError = (error = "") => {
+    setValidInput(true);
+    setDefaultMessage(error)
+  }
+
+  const initModels = async () => {
+    try {
+      let msj = "Send a message to start chatting with ";
+      const response = await httpGet(modelsUrl);
+      if (response.models && Array.isArray(response.models)) {
+        let models = response.models.map(model => model.name);
+        if (models.length > 0) {
+          setModelOptions(models);
+          if (models.includes(modelName)) {
+            msj = msj + modelName;
+          } else {
+            msj = msj + models[0];
+          }
+          setDefaultMessage(msj);
+        } else {
+          initError("Error empty models");
+        }
+      } else {
+        initError("Error no exists models");
+      }
+    } catch (error) {
+      initError("Error fetching models");
+    }
+  }
 
   const sendMessage = async (userMessage) => {
     if (!userMessage.trim()) return;
@@ -91,16 +124,7 @@ const ChatInterface = () => {
     if (showOptions){
       setShowOptions(false);
     } else {
-      try {
-        const response = await httpGet(modelsUrl);
-   
-        if (response.models && Array.isArray(response.models)) {
-          setModelOptions(response.models.map(model => model.name));
-          setShowOptions(true);
-        }
-      } catch (error) {
-        console.error('Error fetching models:', error);
-      }
+      setShowOptions(true);
     }
   };
 
@@ -118,7 +142,7 @@ const ChatInterface = () => {
           <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-gray-900">
             {messages.length === 0 ? (
               <div className="text-center py-8 text-gray-400">
-                <p>Send a message to start chatting with {modelName}</p>
+                <p>{defaultMessage}</p>
               </div>
             ) : (
               messages.map((message) => (
@@ -165,6 +189,7 @@ const ChatInterface = () => {
                 onClick={fetchModels}
                 className="bg-gray-600 hover:bg-gray-700 text-white rounded-lg px-2 transition duration-200 flex items-center"
                 title="Refresh model list"
+                disabled={validInput}
               >
                 <RefreshCw size={16} />
               </button>
@@ -177,12 +202,12 @@ const ChatInterface = () => {
                 placeholder="Type your message..."
                 className="flex-grow border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
                 autoComplete="off"
-                disabled={isLoading}
+                disabled={isLoading || validInput}
               />
               <button
                 type="submit"
                 className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-lg transition duration-200 flex items-center disabled:opacity-50"
-                disabled={isLoading || !inputValue.trim()}
+                disabled={isLoading || validInput || !inputValue.trim()}
               >
                 <Send/>
               </button>
